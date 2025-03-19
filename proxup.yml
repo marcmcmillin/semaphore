@@ -21,13 +21,13 @@
         path: /usr/lib/python3.11/EXTERNALLY-MANAGED
         state: absent
 
-    - name: Install requests via pipx
-      community.general.pipx:
+    - name: Install requests via pip
+      community.general.pip:
         name: requests
         state: install
 
-    - name: Install proxmer via pipx
-      community.general.pipx:
+    - name: Install proxmer via pip
+      community.general.pip:
         package: proxmer
         state: install
          
