@@ -17,7 +17,7 @@
         become: yes
 
     - name: Install requests module via pip
-      ansible.builtin.pip
+      ansible.builtin.pip:
         name: requests
         state: present
 
