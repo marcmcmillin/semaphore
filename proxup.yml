@@ -14,6 +14,14 @@
       apt:
         pkg:
           - python3-pip
-          - requests
-          - proxmoxer
+        state: present
+
+    - name: Install request via pip
+      pip:
+        name: requests
+        state: present
+
+    - name: Install proxmer via pip
+      pip:
+        name: proxmer
         state: present
