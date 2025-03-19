@@ -20,7 +20,8 @@
       pipx:
         package: requests
         state: present
+
       pipx:
-         - requests
-         - proxmer         -
+        package: proxmer
         state: present
+         
