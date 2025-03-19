@@ -1,9 +1,8 @@
 ---
 - name: Install python3-pip
-  apt:
-    pkg:
-      - pipx
-    state: present
+    apt:
+      name: pipx
+      state: present
 
 - name: Ignore PEP 668 because it's silly.
   ansible.builtin.file:
