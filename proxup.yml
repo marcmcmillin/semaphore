@@ -22,12 +22,12 @@
         state: absent
 
     - name: Install requests via pip
-      community.general.pip:
+      community.general.python3-pip:
         name: requests
         state: install
 
     - name: Install proxmer via pip
-      community.general.pip:
+      community.general.python3-pip:
         package: proxmer
         state: install
          
