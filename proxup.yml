@@ -17,11 +17,11 @@
         state: present
 
     - name: Install request via pip
-      pip:
+      pipx:
         name: requests
         state: present
 
     - name: Install proxmer via pip
-      pip:
+      pipx:
         name: proxmer
         state: present
