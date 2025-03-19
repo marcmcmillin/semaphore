@@ -22,12 +22,12 @@
         state: absent
 
     - name: Install requests via pip
-      community.general.python3-pip:
+      ansible.builtin.pip:
         name: requests
-        state: install
+        state: present
 
     - name: Install proxmer via pip
-      community.general.python3-pip:
-        package: proxmer
-        state: install
+      ansible.builtin.pip:
+        name: proxmer
+        state: present
          
