@@ -16,7 +16,12 @@
           - pipx
         state: present
 
-    - name: Install request via pipx
+    - name: Ignore PEP 668 because it's silly.
+      ansible.builtin.file:
+        path: /usr/lib/python3.11/EXTERNALLY-MANAGED
+        state: absent
+
+    - name: Install requests via pipx
       community.general.pipx:
         name: requests
         state: present
