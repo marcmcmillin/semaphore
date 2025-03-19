@@ -17,11 +17,12 @@
         state: present
 
     - name: Install request via pipx
-      pipx:
-        package: requests
+      community.general.pipx:
+        name: requests
         state: present
 
-      pipx:
+    - name: Install proxmer via pipx
+      community.general.pipx:
         package: proxmer
         state: present
          
