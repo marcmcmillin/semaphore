@@ -2,11 +2,11 @@
   hosts: docker
   tasks:
     - name: Update package list
-      become: yes
+      become: true
       apt:
         update_cache: yes
 
     - name: Upgrade all packages
-      become: yes
+      become: true
       apt:
         upgrade: dist
