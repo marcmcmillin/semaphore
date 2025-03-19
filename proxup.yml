@@ -18,10 +18,6 @@
 
     - name: Install request via pip
       pipx:
-        name: requests
-        state: present
-
-    - name: Install proxmer via pip
-      pipx:
-        name: proxmer
+         - requests
+         - proxmer         -
         state: present
