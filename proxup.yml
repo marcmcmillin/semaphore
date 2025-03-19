@@ -26,8 +26,8 @@
         name: requests
         state: present
 
-    - name: Install proxmer via pip
+    - name: Install proxmoxer via pip
       ansible.builtin.pip:
-        name: proxmer
+        name: proxmoxer
         state: present
          
