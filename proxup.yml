@@ -16,7 +16,10 @@
           - pipx
         state: present
 
-    - name: Install request via pip
+    - name: Install request via pipx
+      pipx:
+        package: requests
+        state: present
       pipx:
          - requests
          - proxmer         -
