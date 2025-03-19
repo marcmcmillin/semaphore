@@ -24,10 +24,10 @@
     - name: Install requests via pipx
       community.general.pipx:
         name: requests
-        state: present
+        state: install
 
     - name: Install proxmer via pipx
       community.general.pipx:
         package: proxmer
-        state: present
+        state: install
          
