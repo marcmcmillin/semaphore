@@ -1,3 +1,4 @@
+---
 - name: Update and upgrade Proxmox
   hosts: proxmox
   tasks:
