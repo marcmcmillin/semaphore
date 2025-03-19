@@ -10,24 +10,5 @@
       apt:
         upgrade: dist
 
-    - name: Install python3-pip
-      apt:
-        pkg:
-          - pipx
-        state: present
-
-    - name: Ignore PEP 668 because it's silly.
-      ansible.builtin.file:
-        path: /usr/lib/python3.11/EXTERNALLY-MANAGED
-        state: absent
-
-    - name: Install requests via pip
-      ansible.builtin.pip:
-        name: requests
-        state: present
-
-    - name: Install proxmoxer via pip
-      ansible.builtin.pip:
-        name: proxmoxer
-        state: present
+   
          
