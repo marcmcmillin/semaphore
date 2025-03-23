@@ -1,16 +1,15 @@
 ---
-- hosts: docker  # Or your target hosts
+- hosts: docker_host  # Replace with your target host
   gather_facts: false
   collections:
     - community.docker
   tasks:
     - name: Get Docker container information
       community.docker.docker_container_info:
-        name: "{{ item }}"
-      loop: "{{ docker_container_names }}"
+        all: true
       register: container_info
 
-    - name: Display container information
+    - name: Display container names
       debug:
-        msg: "Container: {{ item.name }}, State: {{ item.state }}"
+        msg: "Container Name: {{ item.Name }}"
       loop: "{{ container_info.results }}"
