@@ -1,5 +1,5 @@
 ---
-- hosts: docker_host  # Replace with your target host
+- hosts: docker  # Replace with your target host
   gather_facts: false
   collections:
     - community.docker
