@@ -1,0 +1,11 @@
+---
+- hosts: docker
+  tasks:
+  - name: List running Docker containers
+    docker_container:
+      state: list
+      status: running
+    register: docker_containers
+  - name: Display the containers
+    debug:
+      var: docker_containers
