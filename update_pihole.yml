@@ -29,20 +29,4 @@
       register: dns_test
       changed_when: false
       failed_when: "'ANSWER SECTION' not in dns_test.stdout"
-    - name: Send update completion notification
-      community.general.mail:
-        host: smtp.gmail.com
-        port: 587
-        username: marc.mcmillin@gmail.com
-        password: ybmrgxpshpmqnloe
-        to: Marc McMillin <techsupport@marcmcmillin.com>
-        subject: "Pi-hole update completed"
-        body: |-
-          "Updates have been applied to all Pi-hole instances.
-
-          {{ pihole_update_result.stdout }}"
-      #when: pihole_update_result.changed
-      #no_log: false
-      #vars:
-      #  ansible_python_interpreter: /urs/bin/python3
-      delegate_to: localhost
+    
