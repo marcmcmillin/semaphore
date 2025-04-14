@@ -42,7 +42,7 @@
 
           {{ pihole_update_result.stdout }}"
       when: pihole_update_result.changed
-      no_log: true
+      no_log: false
       vars:
         ansible_python_interpreter: /urs/bin/python3
       delegate_to: localhost
