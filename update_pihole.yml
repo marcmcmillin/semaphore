@@ -37,15 +37,15 @@
     
     - name: Send update completion notification
       mail:
-      host: smtp.gmail.com
-      port: 587
-      username: marc.mcmillin@gmail.com
-      password: lpwswfxwsfnjcmjn
-      to: techsupport@marcmcmillin.com
-      subject: Pi-hole update completed
-      body: Updates have been applied to all Pi-hole instances.\n\n{{ pihole_update_result.stdout }}
-    when: pihole_update_result.changed
-    no_log: true
-    vars:
-      ansible_python_interpreter: /usr/bin/python3
-    # delegate_to: localhost
+        host: smtp.gmail.com
+        port: 587
+        username: marc.mcmillin@gmail.com
+        password: "{{lpwswfxwsfnjcmjn}}"
+        to: techsupport@marcmcmillin.com
+        subject: "Pi-hole update completed"
+        body: "Updates have been applied to all Pi-hole instances.\n\n{{ pihole_update_result.stdout }}"
+      when: pihole_update_result.changed
+      no_log: true
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      delegate_to: localhost
