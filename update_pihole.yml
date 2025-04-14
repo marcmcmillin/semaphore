@@ -32,11 +32,10 @@
     - name: Send update completion notification
       community.general.mail:
         host: smtp.gmail.com
-        secure: starttls
         port: 587
         username: marc.mcmillin@gmail.com
-        password: " lpwswfxwsfnjcmjn "
-        to: techsupport@marcmcmillin.com
+        password: lpwswfxwsfnjcmjn
+        to: Marc McMillin <techsupport@marcmcmillin.com>
         subject: "Pi-hole update completed"
         body: |-
           "Updates have been applied to all Pi-hole instances.
