@@ -1,8 +1,8 @@
 ---
 - hosts: piholes
-  #become: true
-  #become_method: sudo
-  #become_user: root
+  # become: true
+  # become_method: sudo
+  # become_user: root
   tasks:
     - name: Update package lists
       apt:
@@ -40,7 +40,7 @@
       host: smtp.gmail.com
       port: 587
       username: marc.mcmillin@gmail.com
-      password: "{{ email_password }}"
+      password: lpwswfxwsfnjcmjn
       to: techsupport@marcmcmillin.com
       subject: "Pi-hole update completed"
       body: "Updates have been applied to all Pi-hole instances.\n\n{{ pihole_update_result.stdout }}"
