@@ -30,11 +30,12 @@
       changed_when: false
       failed_when: "'ANSWER SECTION' not in dns_test.stdout"
     - name: Send update completion notification
-      mail:
+      community.general.email:
         host: smtp.gmail.com
+        secure: starttls
         port: 587
         username: marc.mcmillin@gmail.com
-        password: " lpws wfxw sfnj cmjn "
+        password: " lpwswfxwsfnjcmjn "
         to: techsupport@marcmcmillin.com
         subject: "Pi-hole update completed"
         body: |-
