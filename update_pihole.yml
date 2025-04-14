@@ -33,4 +33,4 @@
       command: dig @localhost google.com
       register: dns_test
       changed_when: false
-      failed_when: "'ANSWER SECTION' not in dns_test.stdout
+      failed_when: "'ANSWER SECTION' not in dns_test.stdout"
