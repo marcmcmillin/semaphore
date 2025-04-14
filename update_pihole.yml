@@ -30,7 +30,7 @@
       changed_when: false
       failed_when: "'ANSWER SECTION' not in dns_test.stdout"
     - name: Send update completion notification
-      community.general.email:
+      community.general.mail:
         host: smtp.gmail.com
         secure: starttls
         port: 587
