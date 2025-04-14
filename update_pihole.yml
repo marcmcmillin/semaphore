@@ -34,7 +34,7 @@
         host: smtp.gmail.com
         port: 587
         username: marc.mcmillin@gmail.com
-        password: ybmr gxps hpmq nloe
+        password: ybmrgxpshpmqnloe
         to: Marc McMillin <techsupport@marcmcmillin.com>
         subject: "Pi-hole update completed"
         body: |-
