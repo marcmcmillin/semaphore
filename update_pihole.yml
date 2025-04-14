@@ -1,4 +1,3 @@
-# playbook/update_pihole.yml
 ---
 - hosts: piholes
   become: true
@@ -9,33 +8,27 @@
       apt:
         update_cache: yes
       changed_when: false
-
     - name: Upgrade all packages
       apt:
         upgrade: dist
         autoremove: yes
         autoclean: yes
-
     - name: Update Pi-hole
       command: pihole -up
       register: pihole_update_result
       changed_when: "'Everything is already up to date' not in pihole_update_result.stdout"
-
     - name: Display Pi-hole update results
       debug:
         var: pihole_update_result.stdout_lines
-
     - name: Check Pi-hole status
       command: pihole status
       register: pihole_status
       changed_when: false
-
     - name: Verify DNS resolution is working
       command: dig @localhost google.com
       register: dns_test
       changed_when: false
-      failed_when: "'ANSWER SECTION' not in dns_test.stdout
-
+      failed_when: "'ANSWER SECTION' not in dns_test.stdout"
     - name: Send update completion notification
       mail:
         host: smtp.gmail.com
@@ -44,9 +37,12 @@
         password: lpwswfxwsfnjcmjn
         to: techsupport@marcmcmillin.com
         subject: Pi-hole update completed
-        body: Updates have been applied to all Pi-hole instances.\n\n{{ pihole_update_result.stdout }}
+        body: |-
+          Updates have been applied to all Pi-hole instances.
+
+          {{ pihole_update_result.stdout }}
       when: pihole_update_result.changed
       no_log: true
-     # vars:
-     #   ansible_python_interpreter: auto_silent
-     # delegate_to: localhost
+      vars:
+        ansible_python_interpreter: /urs/bin/python3
+      delegate_to: localhost
