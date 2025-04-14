@@ -46,6 +46,6 @@
         body: Updates have been applied to all Pi-hole instances.\n\n{{ pihole_update_result.stdout }}
       when: pihole_update_result.changed
       no_log: true
-      vars:
-        ansible_python_interpreter: auto_silent
-      delegate_to: localhost
+     # vars:
+     #   ansible_python_interpreter: auto_silent
+     # delegate_to: localhost
