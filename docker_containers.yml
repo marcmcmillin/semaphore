@@ -5,24 +5,30 @@
     - community.docker
   gather_facts: false
   tasks:
-    - name: Get all Docker networks
+    - name: Get all Docker network names
       community.docker.docker_network_info:
         all: yes
-      register: docker_networks
+      register: all_networks_info
 
-    - name: Get details for each network and its containers
+    - name: Loop through network names and get details
       community.docker.docker_network_info:
-        name: "{{ item.name }}"
+        name: "{{ network.name }}"
       register: network_details
-      loop: "{{ docker_networks.networks }}"
+      loop: "{{ all_networks_info.networks }}"
+      loop_control:
+        loop_var: network
 
     - name: Display containers in each network
       debug:
-        msg: "Network: {{ item.network.Name }}"
-      loop: "{{ network_details.results }}"
+        msg: "Network: {{ network_details.results[item].network.Name }}"
+      loop: "{{ network_details.results | length | list }}"
+      loop_control:
+        index_var: item
 
     - name: Display container details
       debug:
-        msg: "  Containers: {{ item.network.Containers | dict2items }}"
-      loop: "{{ network_details.results }}"
-      when: item.network.Containers is defined and item.network.Containers | length > 0
+        msg: "  Containers: {{ network_details.results[item].network.Containers | dict2items }}"
+      loop: "{{ network_details.results | length | list }}"
+      loop_control:
+        index_var: item
+      when: network_details.results[item].network.Containers is defined and network_details.results[item].network.Containers | length > 0
