@@ -3,7 +3,7 @@
   hosts: docker  # Replace with your Docker host group
   collections:
     - community.docker
-  gather_facts: true
+  gather_facts: false
   tasks:
     - name: Get all Docker networks
       community.docker.docker_network_info:
