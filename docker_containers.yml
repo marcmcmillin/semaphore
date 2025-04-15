@@ -17,7 +17,7 @@
 
     - name: Get container details for each network
       community.docker.docker_network_info:
-        name: "{{ item.name }}"
+        name: "{{ item.name }}"  # Added the 'name' parameter
       register: network_info
       loop: "{{ docker_networks.networks }}"
 
