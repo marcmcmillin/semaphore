@@ -2,7 +2,7 @@
 - hosts: docker
   gather_facts: false
   vars:
-    docker_network: bridge,gitea,gotify,dium,dockage
+    docker_network: dockge
   collections:
     - community.docker
   tasks:
