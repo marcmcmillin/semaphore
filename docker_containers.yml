@@ -1,6 +1,6 @@
 ---
 - name: View Containers in All Docker Networks
-  hosts: your_docker_hosts  # Replace with your Docker host group
+  hosts: docker  # Replace with your Docker host group
   collections:
     - community.docker
   gather_facts: false
