@@ -1,50 +1,50 @@
 ---
-- name: View Containers in All Docker Networks
+- name: View Containers in All Docker Networks (Alternative Approach)
   hosts: docker
   collections:
     - community.docker
   gather_facts: false
   tasks:
-    - name: Get all Docker networks
-      community.docker.docker_network_info:
-        all: yes
-      register: all_networks
+    - name: Get all Docker networks (names only)
+      community.docker.docker_network:
+        list: true
+        names_only: true
+      register: all_network_names
 
-    - name: Debug - Print all_networks variable (with type)
+    - name: Debug - Print all_network_names
       debug:
-        msg: "all_networks: {{ all_networks | type_debug }}"
+        var: all_network_names
 
     - name: Get details for each network and its containers
       community.docker.docker_network_info:
-        name: "{{ item.name | default(omit) }}"
+        name: "{{ item }}"
       register: network_details
-      loop: "{{ all_networks.networks | default([]) }}"
-      when: all_networks.networks is defined and all_networks.networks | length > 0
-      ignore_errors: yes  # Temporarily ignore errors to see loop output
+      loop: "{{ all_network_names.networks | default([]) }}"
+      ignore_errors: yes
 
-    - name: Debug - Print network_details variable (with type)
+    - name: Debug - Print network_details variable (alternative)
       debug:
-        msg: "network_details: {{ network_details | type_debug }}"
+        var: network_details
 
-    - name: Debug - Print individual network_details results
+    - name: Debug - Print individual network details results (alternative)
       debug:
         msg: "network_details.results[{{ item.index }}]: {{ item }}"
       loop: "{{ network_details.results | default([]) }}"
 
-    - name: Display containers in each network (if details were fetched)
+    - name: Display containers in each network
       debug:
         msg: "Network: {{ network_details.results[loop.index].network.Name }}"
-      loop: "{{ all_networks.networks | default([]) }}"
+      loop: "{{ all_network_names.networks | default([]) }}"
       when:
         - network_details.results is defined
         - network_details.results | length > 0
         - network_details.results[loop.index].network is defined
         - network_details.results[loop.index].network.Name is defined
 
-    - name: Display container details (if details were fetched)
+    - name: Display container details
       debug:
         msg: "  Containers: {{ network_details.results[loop.index].network.Containers | dict2items }}"
-      loop: "{{ all_networks.networks | default([]) }}"
+      loop: "{{ all_network_names.networks | default([]) }}"
       when:
         - network_details.results is defined
         - network_details.results | length > 0
