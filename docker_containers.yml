@@ -1,6 +1,6 @@
 ---
 - name: View Containers in All Docker Networks
-  hosts: docker  # Replace with your Docker host group
+  hosts: docker
   collections:
     - community.docker
   gather_facts: false
@@ -10,19 +10,33 @@
         all: yes
       register: all_networks
 
+    - name: Debug - Print all_networks variable
+      debug:
+        var: all_networks
+
     - name: Get details for each network and its containers
       community.docker.docker_network_info:
         name: "{{ item.name }}"
       register: network_details
       loop: "{{ all_networks.networks }}"
+      when: all_networks.networks is defined and all_networks.networks | length > 0
+
+    - name: Debug - Print network_details variable
+      debug:
+        var: network_details
 
     - name: Display containers in each network
       debug:
         msg: "Network: {{ network_details.results[loop.index].network.Name }}"
       loop: "{{ all_networks.networks }}"
+      when: network_details.results is defined and network_details.results | length > 0 and network_details.results[loop.index].network.Name is defined
 
     - name: Display container details
       debug:
         msg: "  Containers: {{ network_details.results[loop.index].network.Containers | dict2items }}"
       loop: "{{ all_networks.networks }}"
-      when: network_details.results[loop.index].network.Containers is defined and network_details.results[loop.index].network.Containers | length > 0
+      when:
+        - network_details.results is defined
+        - network_details.results | length > 0
+        - network_details.results[loop.index].network.Containers is defined
+        - network_details.results[loop.index].network.Containers | length > 0
