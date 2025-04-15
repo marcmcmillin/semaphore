@@ -10,19 +10,19 @@
         all: yes
       register: docker_networks
 
-    - name: List containers in each network
-      debug:
-        msg: "Network: {{ item.name }}"
-      loop: "{{ docker_networks.networks }}"
-
-    - name: Get container details for each network
+    - name: Get details for each network and its containers
       community.docker.docker_network_info:
-        name: "{{ item.name }}"  # Added the 'name' parameter
-      register: network_info
+        name: "{{ item.name }}"
+      register: network_details
       loop: "{{ docker_networks.networks }}"
 
     - name: Display containers in each network
       debug:
-        msg: "  Containers: {{ network_info.results[loop.index].network.Containers | dict2items }}"
-      loop: "{{ docker_networks.networks }}"
-      when: network_info.results[loop.index].network.Containers is defined and network_info.results[loop.index].network.Containers | length > 0
+        msg: "Network: {{ item.network.Name }}"
+      loop: "{{ network_details.results }}"
+
+    - name: Display container details
+      debug:
+        msg: "  Containers: {{ item.network.Containers | dict2items }}"
+      loop: "{{ network_details.results }}"
+      when: item.network.Containers is defined and item.network.Containers | length > 0
