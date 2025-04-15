@@ -3,32 +3,26 @@
   hosts: docker  # Replace with your Docker host group
   collections:
     - community.docker
-  gather_facts: true
+  gather_facts: false
   tasks:
-    - name: Get all Docker network names
+    - name: Get all Docker networks
       community.docker.docker_network_info:
         all: yes
-      register: all_networks_info
+      register: all_networks
 
-    - name: Loop through network names and get details
+    - name: Get details for each network and its containers
       community.docker.docker_network_info:
-        name: "{{ network.name }}"
+        name: "{{ item.name }}"
       register: network_details
-      loop: "{{ all_networks_info.networks }}"
-      loop_control:
-        loop_var: network
+      loop: "{{ all_networks.networks }}"
 
     - name: Display containers in each network
       debug:
-        msg: "Network: {{ network_details.results[item].network.Name }}"
-      loop: "{{ network_details.results | length | list }}"
-      loop_control:
-        index_var: item
+        msg: "Network: {{ network_details.results[loop.index].network.Name }}"
+      loop: "{{ all_networks.networks }}"
 
     - name: Display container details
       debug:
-        msg: "  Containers: {{ network_details.results[item].network.Containers | dict2items }}"
-      loop: "{{ network_details.results | length | list }}"
-      loop_control:
-        index_var: item
-      when: network_details.results[item].network.Containers is defined and network_details.results[item].network.Containers | length > 0
+        msg: "  Containers: {{ network_details.results[loop.index].network.Containers | dict2items }}"
+      loop: "{{ all_networks.networks }}"
+      when: network_details.results[loop.index].network.Containers is defined and network_details.results[loop.index].network.Containers | length > 0
