@@ -1,0 +1,12 @@
+- name: Update and upgrade Docker Swarm nodes
+  hosts: swarm
+  tasks:
+    - name: Update package list
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      become: true
+      apt:
+        upgrade: dist
