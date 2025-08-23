@@ -1,6 +1,6 @@
 ---
 - name: Update and upgrade Proxmox
-  hosts: 192.168.42.6
+  hosts: proxmox
   tasks:
     - name: Update package list
       apt:
