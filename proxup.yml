@@ -1,6 +1,6 @@
 ---
 - name: Update and upgrade Proxmox
-  hosts: proxmox
+  hosts: all
   tasks:
     - name: Update package list
       apt:
