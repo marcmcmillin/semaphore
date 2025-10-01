@@ -1,13 +1,12 @@
 - name: Update and upgrade Docker Servers
   hosts: all
-  become: yes
   tasks:
     - name: Update package list
-      become: true
+      become: yes
       apt:
         update_cache: yes
 
     - name: Upgrade all packages
-      become: true
+      become: yes
       apt:
         upgrade: dist
