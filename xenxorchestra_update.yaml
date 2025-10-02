@@ -18,7 +18,7 @@
         force: yes # Ensure the latest version is pulled
 
     - name: Execute the Xen Orchestra update script
-      ansible.builtin.command: /home/marc/XenOrchestraInstallerUpdater/xo-install.sh -u
+      ansible.builtin.command: /home/marc/XenOrchestraInstallerUpdater/xo-install.sh --update
       args:
         chdir: /home/marc/XenOrchestraInstallerUpdater # Run the script from its directory
       register: xo_update_result
