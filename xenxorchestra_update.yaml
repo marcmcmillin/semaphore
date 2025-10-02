@@ -10,13 +10,6 @@
         state: present
       when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
 
-    - name: Clone or update Xen Orchestra Installer/Updater script
-      ansible.builtin.git:
-        repo: 'https://github.com/ronivay/XenOrchestraInstallerUpdater.git'
-        dest: '/opt/XenOrchestraInstallerUpdater' # Or your preferred location
-        version: master # Or a specific branch/tag if desired
-        force: yes # Ensure the latest version is pulled
-
     - name: Execute the Xen Orchestra update script
       ansible.builtin.command: /opt/XenOrchestraInstallerUpdater/xo-install.sh -u
       args:
