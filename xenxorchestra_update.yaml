@@ -1,0 +1,29 @@
+---
+- name: Update Xen Orchestra
+  hosts: 192.168.42.174 # Replace with your target host group or server name
+  become: yes # Run tasks with root privileges
+
+  tasks:
+    - name: Ensure git is installed
+      ansible.builtin.apt: # Or use 'yum' for RHEL-based systems
+        name: git
+        state: present
+      when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+    - name: Clone or update Xen Orchestra Installer/Updater script
+      ansible.builtin.git:
+        repo: 'https://github.com/ronivay/XenOrchestraInstallerUpdater.git'
+        dest: '/opt/XenOrchestraInstallerUpdater' # Or your preferred location
+        version: master # Or a specific branch/tag if desired
+        force: yes # Ensure the latest version is pulled
+
+    - name: Execute the Xen Orchestra update script
+      ansible.builtin.command: /opt/XenOrchestraInstallerUpdater/xo-install.sh -u
+      args:
+        chdir: /opt/XenOrchestraInstallerUpdater # Run the script from its directory
+      register: xo_update_result
+      changed_when: xo_update_result.rc != 0 # Consider a change if the script fails
+
+    - name: Display update results
+      ansible.builtin.debug:
+        var: xo_update_result.stdout_lines
