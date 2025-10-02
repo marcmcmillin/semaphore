@@ -4,6 +4,15 @@
   become: yes # Run tasks with root privileges
 
   tasks:
+
+    - name: Update package list
+      apt:
+       update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+        
     - name: Ensure git is installed
       ansible.builtin.apt: # Or use 'yum' for RHEL-based systems
         name: git
