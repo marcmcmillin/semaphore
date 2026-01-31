@@ -22,11 +22,11 @@
         # --- CLOUD-INIT SETTINGS ---
         ciuser: "awx"
         sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
+        cipassword: "TemporaryPassword123!" # Sometimes required to trigger user creation
         ipconfig:
           ipconfig0: "ip=dhcp"
-        # ---------------------------
         state: present
-        timeout: 600
+        update_cloudinit: yes # Forces Proxmox to rewrite the CD-ROM config
 
     - name: Start the newly created VM
       community.proxmox.proxmox_kvm:
