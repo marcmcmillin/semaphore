@@ -67,6 +67,10 @@
         state: started
         timeout: 120
 
+    - name: Wait for any background apt processes to finish
+      ansible.builtin.shell: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done;
+      timeout: 300
+
 # PLAY 2: Software Provisioning
 - name: Stage 2 - Install Docker
   hosts: provisioned_nodes
