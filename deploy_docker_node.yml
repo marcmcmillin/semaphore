@@ -12,6 +12,8 @@
 
     - name: Clone Template to New VM
       community.proxmox.proxmox_kvm:
+        sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s" # Paste your AWX Public Key here
+        state: present
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
