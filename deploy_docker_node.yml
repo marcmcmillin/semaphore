@@ -22,6 +22,7 @@
         ipconfig:
           ipconfig0: "ip=dhcp"
         state: present
+        timeout: 600  # Increased to 10 minutes
 
     - name: Start the newly created VM
       community.proxmox.proxmox_kvm:
