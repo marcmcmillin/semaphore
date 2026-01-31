@@ -28,6 +28,7 @@
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
+        node: rent
         vmid: "{{ user_vm_id }}"
         update: yes
         ciuser: "awx"  # Matches your key's intended user
