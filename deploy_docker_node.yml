@@ -43,13 +43,18 @@
     - name: Retrieve IP from Guest Agent
       ansible.builtin.shell: "qm guest network-get {{ user_vm_id }} --agent 1 | grep 'ip-address' | head -n 1 | awk '{print $4}' | cut -d/ -f1"
       register: new_vm_ip
-      delegate_to: 192.168.42.147 # This runs the command directly on your PVE node
+      delegate_to: 192.168.42.147 # Use the Proxmox IP that worked
+      remote_user: root
+      # The Fix: Retry 10 times, waiting 10 seconds between each try
+      until: new_vm_ip.stdout != ""
+      retries: 10
+      delay: 10
 
     - name: Add New VM to Temporary Inventory
       ansible.builtin.add_host:
         name: "{{ new_vm_ip.stdout }}"
         groups: "provisioned_nodes"
-        ansible_user: "ubuntu" # Default for Noble cloud images
+        ansible_user: "ubuntu"
 
 # PLAY 2: Talks to the NEW VM to install Docker
 - name: Stage 2 - Install Docker
