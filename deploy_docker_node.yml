@@ -43,7 +43,7 @@
     - name: Retrieve IP from Guest Agent
       ansible.builtin.shell: "qm guest network-get {{ user_vm_id }} --agent 1 | grep 'ip-address' | head -n 1 | awk '{print $4}' | cut -d/ -f1"
       register: new_vm_ip
-      delegate_to: rent # This runs the command directly on your PVE node
+      delegate_to: 192.168.42.147 # This runs the command directly on your PVE node
 
     - name: Add New VM to Temporary Inventory
       ansible.builtin.add_host:
