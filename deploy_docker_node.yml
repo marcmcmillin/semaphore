@@ -17,7 +17,7 @@
         node: "rent"        # Or use a variable if you have a favorite node
         clone: 9000
         name: "{{ user_vm_name }}"
-        vmid: "{{ user_vm_id }}"
+        newid: "{{ user_vm_id }}"
         timeout: 600
         storage: "roger"
         format: qcow2
