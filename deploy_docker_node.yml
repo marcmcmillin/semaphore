@@ -19,6 +19,8 @@
         clone: "noble-cloud-template"
         newid: "{{ user_vm_id }}"
         name: "{{ user_vm_name }}"
+        full: no
+        timeout: 900
         state: present
 
     - name: Configure Cloud-Init for AWX user
