@@ -12,7 +12,7 @@
       community.proxmox.proxmox_node_info:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
-        api_host: "192.168.1.XX"
+        api_host: "192.168.42.XX"
         validate_certs: false
       register: pve_nodes
 
