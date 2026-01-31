@@ -1,15 +1,10 @@
 ---
-# PLAY 1: Talks to Proxmox to build the VM
+# PLAY 1: Infrastructure Provisioning
 - name: Stage 1 - Clone and Configure VM
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Ensure dependencies are present
-      ansible.builtin.pip:
-        name: proxmoxer
-        state: present
-
-    - name: Clone and Start VM
+    - name: Clone Template to New VM
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
@@ -20,7 +15,16 @@
         name: "{{ user_vm_name }}"
         ipconfig:
           ipconfig0: "ip=dhcp"
-        state: started  # Clones and starts the VM
+        state: present  # Creates the VM without starting it
+
+    - name: Start the newly created VM
+      community.proxmox.proxmox_kvm:
+        api_user: "root@pam"
+        api_password: "{{ proxmox_password }}"
+        api_host: "192.168.42.141"
+        node: "rent"
+        vmid: "{{ user_vm_id }}"
+        state: started  # Now starts the clone successfully
 
     - name: Wait for Guest Agent to report IPv4
       ansible.builtin.shell: |
@@ -37,7 +41,7 @@
         name: "{{ vm_ipv4.stdout }}"
         groups: "provisioned_nodes"
         ansible_user: "ubuntu"
-        ansible_ssh_extra_args: "-o StrictHostKeyChecking=no" # Prevents SSH thumbprint prompt
+        ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
 
     - name: Wait for SSH to be ready
       ansible.builtin.wait_for:
@@ -46,16 +50,16 @@
         state: started
         timeout: 120
 
-# PLAY 2: Talks to the NEW VM to install Docker
+# PLAY 2: Software Provisioning
 - name: Stage 2 - Install Docker
   hosts: provisioned_nodes
   become: true
-  gather_facts: true # Helpful for systemd tasks
+  gather_facts: true
   tasks:
     - name: Run Docker Installation Script
       ansible.builtin.shell: curl -sSL https://get.docker.com | sh
       args:
-        creates: /usr/bin/docker # Skips if already installed
+        creates: /usr/bin/docker
 
     - name: Ensure Docker service is enabled
       ansible.builtin.systemd:
