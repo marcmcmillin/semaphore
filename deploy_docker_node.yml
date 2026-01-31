@@ -27,6 +27,7 @@
           ipconfig0: "ip=dhcp"
         state: present
         update_cloudinit: yes # Forces Proxmox to rewrite the CD-ROM config
+        timeout: 600
 
     - name: Start the newly created VM
       community.proxmox.proxmox_kvm:
