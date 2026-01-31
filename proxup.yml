@@ -2,6 +2,7 @@
 - name: Update and upgrade Proxmox
   hosts: all
   become: true
+  serial: 1
   tasks:
     - name: Update package list
       apt:
