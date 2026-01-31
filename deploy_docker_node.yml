@@ -23,7 +23,7 @@
         format: qcow2
         citype: nocloud
         # Ensure your public SSH key is here so you can log in
-        sshkeys: "ssh-rsa AAAAB3Nza...your_key_here..."
+        sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
         ipconfig:
           ipconfig0: "ip=dhcp"
 
