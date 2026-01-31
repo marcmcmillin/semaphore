@@ -54,7 +54,7 @@
       ansible.builtin.add_host:
         name: "{{ vm_ipv4.stdout }}"
         groups: "provisioned_nodes"
-        ansible_user: "ubuntu"
+        ansible_user: "awx"
         ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
 
     - name: Wait for SSH to be ready
