@@ -10,14 +10,7 @@
         state: present
 
 ---
-- name: Stage 1 - Clone and Configure VM
-  hosts: localhost
-  gather_facts: false
-  vars:
-    # We assume your gateway is .1 of your subnet
-    network_gw: "192.168.42.1"
-  tasks:
-    - name: Clone and Configure Network
+- name: Clone and Start VM
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
@@ -26,25 +19,23 @@
         clone: "noble-cloud-template"
         newid: "{{ user_vm_id }}"
         name: "{{ user_vm_name }}"
-        # This ensures the virtual NIC is properly defined
-        net0: "virtio,bridge=vmbr0"
-        # Dynamic IP assignment from your Survey
         ipconfig:
-          ipconfig0: "ip={{ user_vm_ip }}/24,gw={{ network_gw }}"
-        state: present
+          ipconfig0: "ip=dhcp"
+        state: started # This clones and starts in one go
 
-    - name: Start VM
-      community.proxmox.proxmox_kvm:
-        node: "rent"
-        vmid: "{{ user_vm_id }}"
-        state: started
-        api_host: "192.168.42.141"
-        api_user: "root@pam"
-        api_password: "{{ proxmox_password }}"
+    - name: Wait for Guest Agent to report IPv4
+      ansible.builtin.shell: |
+        qm guest network-get {{ user_vm_id }} --agent 1 | grep -oP 'ip-address": "\K192\.168\.[0-9.]+' | head -n 1
+      register: vm_ipv4
+      delegate_to: 192.168.42.147
+      remote_user: root
+      until: vm_ipv4.stdout != ""
+      retries: 20
+      delay: 10
 
-    - name: Add to Inventory and Provision
+    - name: Add New VM to Inventory
       ansible.builtin.add_host:
-        name: "{{ user_vm_ip }}"
+        name: "{{ vm_ipv4.stdout }}"
         groups: "provisioned_nodes"
         ansible_user: "ubuntu"
 
