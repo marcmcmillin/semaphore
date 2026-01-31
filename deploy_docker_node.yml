@@ -19,25 +19,27 @@
         clone: "noble-cloud-template"
         newid: "{{ user_vm_id }}"
         name: "{{ user_vm_name }}"
-        # --- CLOUD-INIT SETTINGS ---
-        ciuser: "awx"
+        state: present
+
+    - name: Configure Cloud-Init for AWX user
+      community.proxmox.proxmox_kvm:
+        api_user: "root@pam"
+        api_password: "{{ proxmox_password }}"
+        api_host: "192.168.42.141"
+        vmid: "{{ user_vm_id }}"
+        update: yes
+        ciuser: "awx"  # Matches your key's intended user
         sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
-        cipassword: "TemporaryPassword123!" # Sometimes required to trigger user creation
         ipconfig:
           ipconfig0: "ip=dhcp"
-        state: present
-        update: yes 
-        timeout: 600
 
     - name: Start the newly created VM
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
-        node: "rent"
         vmid: "{{ user_vm_id }}"
         state: started
-
     - name: Wait for Guest Agent to report IPv4
       ansible.builtin.shell: |
         qm guest cmd {{ user_vm_id }} network-get-interfaces | grep -oE '192\.168\.[0-9]+\.[0-9]+' | head -n 1
