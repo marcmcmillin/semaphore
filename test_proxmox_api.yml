@@ -3,8 +3,12 @@
   hosts: localhost
   gather_facts: false
   tasks:
+    - name: Ensure proxmoxer is installed in the runner
+      ansible.builtin.pip:
+        name: proxmoxer
+        state: present
+
     - name: Get Proxmox Node Status
-      # Change community.general to community.proxmox
       community.proxmox.proxmox_node_info:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
