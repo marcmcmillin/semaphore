@@ -9,50 +9,42 @@
         name: proxmoxer
         state: present
 
-    - name: Clone Template 9000 to New VM
-      community.proxmox.proxmox_kvm:
-        api_user: "root@pam"
-        api_password: "{{ proxmox_password }}"
-        api_host: "192.168.42.141" # Use the IP from your successful test
-        node: "rent"        # Or use a variable if you have a favorite node
-        clone: "noble-cloud-template"
-        name: "{{ user_vm_name }}"
-        newid: "{{ user_vm_id }}"
-        timeout: 600
-        storage: "roger"
-        format: qcow2
-        citype: nocloud
-        # Ensure your public SSH key is here so you can log in
-        sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
-        ipconfig:
-          ipconfig0: "ip=dhcp"
-
-    - name: Start the new VM
+---
+- name: Stage 1 - Clone and Configure VM
+  hosts: localhost
+  gather_facts: false
+  vars:
+    # We assume your gateway is .1 of your subnet
+    network_gw: "192.168.42.1"
+  tasks:
+    - name: Clone and Configure Network
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
         node: "rent"
+        clone: "noble-cloud-template"
+        newid: "{{ user_vm_id }}"
+        name: "{{ user_vm_name }}"
+        # This ensures the virtual NIC is properly defined
+        net0: "virtio,bridge=vmbr0"
+        # Dynamic IP assignment from your Survey
+        ipconfig:
+          ipconfig0: "ip={{ user_vm_ip }}/24,gw={{ network_gw }}"
+        state: present
+
+    - name: Start VM
+      community.proxmox.proxmox_kvm:
+        node: "rent"
         vmid: "{{ user_vm_id }}"
         state: started
+        api_host: "192.168.42.141"
+        api_user: "root@pam"
+        api_password: "{{ proxmox_password }}"
 
-    - name: Wait for VM to boot and get IP
-      ansible.builtin.pause:
-        seconds: 45
-
-    - name: Retrieve IP from Guest Agent
-      ansible.builtin.shell: "qm guest network-get {{ user_vm_id }} --agent 1 | grep 'ip-address' | head -n 1 | awk '{print $4}' | cut -d/ -f1"
-      register: new_vm_ip
-      delegate_to: 192.168.42.147 # Use the Proxmox IP that worked
-      remote_user: root
-      # The Fix: Retry 10 times, waiting 10 seconds between each try
-      until: new_vm_ip.stdout != ""
-      retries: 10
-      delay: 10
-
-    - name: Add New VM to Temporary Inventory
+    - name: Add to Inventory and Provision
       ansible.builtin.add_host:
-        name: "{{ new_vm_ip.stdout }}"
+        name: "{{ user_vm_ip }}"
         groups: "provisioned_nodes"
         ansible_user: "ubuntu"
 
