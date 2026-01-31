@@ -21,7 +21,7 @@
         name: "{{ user_vm_name }}"
         # --- CLOUD-INIT SETTINGS ---
         ciuser: "awx"
-        sshkeys: "ssh-ed25519 AAAAC3Nza...rest_of_your_key_here... awx@k3s"
+        sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
         ipconfig:
           ipconfig0: "ip=dhcp"
         # ---------------------------
