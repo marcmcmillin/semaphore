@@ -63,8 +63,15 @@
 - name: Stage 2 - Install Docker
   hosts: provisioned_nodes
   become: true
-  gather_facts: true
+  gather_facts: false # Important: don't gather facts until we're sure the user exists
   tasks:
+    - name: Wait for SSH to be fully responsive for the new user
+      ansible.builtin.wait_for_connection:
+        delay: 5
+        timeout: 120
+
+    - name: Gather facts now that awx user is ready
+      ansible.builtin.setup:
     - name: Run Docker Installation Script
       ansible.builtin.shell: curl -sSL https://get.docker.com | sh
       args:
