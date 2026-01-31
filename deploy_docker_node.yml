@@ -35,7 +35,7 @@
 
     - name: Wait for Guest Agent to report IPv4
       ansible.builtin.shell: |
-        qm guest cmd {{ user_vm_id }} get-networks | jq -r '.[0]["ip-addresses"][] | select(.["ip-address"] | startswith("192.168.")) | .["ip-address"]' | head -n 1
+        qm guest cmd {{ user_vm_id }} network-get-interfaces | grep -oP 'ip-address": "\K192\.168\.[0-9.]+' | head -n 1
       register: vm_ipv4
       delegate_to: 192.168.42.147
       remote_user: root
