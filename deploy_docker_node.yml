@@ -4,6 +4,12 @@
   hosts: localhost
   gather_facts: false
   tasks:
+    # ADDED THIS: Installs the required library into the AWX runner pod
+    - name: Ensure proxmoxer is installed
+      ansible.builtin.pip:
+        name: proxmoxer
+        state: present
+
     - name: Clone Template to New VM
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
@@ -15,7 +21,7 @@
         name: "{{ user_vm_name }}"
         ipconfig:
           ipconfig0: "ip=dhcp"
-        state: present  # Creates the VM without starting it
+        state: present
 
     - name: Start the newly created VM
       community.proxmox.proxmox_kvm:
@@ -24,7 +30,7 @@
         api_host: "192.168.42.141"
         node: "rent"
         vmid: "{{ user_vm_id }}"
-        state: started  # Now starts the clone successfully
+        state: started
 
     - name: Wait for Guest Agent to report IPv4
       ansible.builtin.shell: |
