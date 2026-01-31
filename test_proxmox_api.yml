@@ -1,0 +1,16 @@
+---
+- name: Test Proxmox API Connection
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Get Proxmox Node Status
+      community.general.proxmox_node_info:
+        api_user: "root@pam"
+        api_password: "{{ proxmox_password }}"
+        api_host: "192.168.1.XX" # Replace with your PVE IP
+        validate_certs: false
+      register: pve_nodes
+
+    - name: Display Found Nodes
+      ansible.builtin.debug:
+        msg: "Success! AWX can see these nodes: {{ pve_nodes.proxmox_nodes | map(attribute='node') | list }}"
