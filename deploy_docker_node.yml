@@ -15,7 +15,7 @@
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141" # Use the IP from your successful test
         node: "rent"        # Or use a variable if you have a favorite node
-        clone: "9000"
+        clone: "noble-cloud-template"
         name: "{{ user_vm_name }}"
         newid: "{{ user_vm_id }}"
         timeout: 600
