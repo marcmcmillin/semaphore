@@ -30,9 +30,8 @@
         vmid: "{{ user_vm_id }}"
         # This expands the primary disk (usually scsi0 or virtio0)
         # Change 'scsi0' to match your template's drive name
-        disk: "scsi0" 
-        size: "150G" 
-        update: yes
+        scsi:
+          scsi0: "roger:150"
 
     - name: Configure Cloud-Init for AWX user
       community.proxmox.proxmox_kvm:
