@@ -78,3 +78,23 @@
         name: [docker.io, docker-compose]
         state: present
         update_cache: yes
+        
+    - name: Deploy Portainer Agent via Docker CLI
+      ansible.builtin.shell: |
+        docker run -d \
+          -p 9001:9001 \
+          --name portainer_agent \
+          --restart always \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+          portainer/agent:2.19.4
+
+    - name: Install Pulse Monitoring Agent
+      ansible.builtin.shell: |
+        curl -fsSL http://192.168.42.29:7655/install.sh | bash -s -- \
+        --url http://192.168.42.29:7655 \
+        --token 355f098831af9f886470c34b1c3c74957c30601a4d0119d6b43603e079b9915b \
+        --interval 30s
+      register: pulse_install
+      changed_when: "'installed' in pulse_install.stdout or pulse_install.rc == 0"
+    
