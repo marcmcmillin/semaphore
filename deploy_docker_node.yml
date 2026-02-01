@@ -1,4 +1,5 @@
-# PLAY 1: Infrastructure Provisioning
+---
+# PLAY 1: Infrastructure Provisioning on 'rent'
 - name: Stage 1 - Clone and Configure VM
   hosts: localhost
   gather_facts: false
@@ -14,12 +15,11 @@
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
         node: "rent"
-        target: "{{ target_proxmox_node }}" # Dynamic Variable from Survey
-        clone: "noble-cloud-template" # Ensure this is now 20GB!
+        clone: "noble-cloud-template"
         newid: "{{ user_vm_id }}"
         name: "{{ user_vm_name }}"
-        full: yes                    # Full independence
-        storage: "{{ target_storage_pool }}" # Dynamic Storage Variable
+        full: yes
+        storage: "roger"
         timeout: 1200
         state: present
 
@@ -78,19 +78,3 @@
         name: [docker.io, docker-compose]
         state: present
         update_cache: yes
-
-    - name: Install Docker SDK for Python
-      ansible.builtin.apt:
-        name: python3-docker
-        state: present       
-        
-    - name: Deploy Portainer Agent via Docker CLI
-      ansible.builtin.shell: |
-        docker run -d \
-          -p 9001:9001 \
-          --name portainer_agent \
-          --restart always \
-          -v /var/run/docker.sock:/var/run/docker.sock \
-          -v /var/lib/docker/volumes:/var/lib/docker/volumes \
-          portainer/agent:2.19.4
-    
