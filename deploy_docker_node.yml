@@ -1,10 +1,8 @@
----
 # PLAY 1: Infrastructure Provisioning
 - name: Stage 1 - Clone and Configure VM
   hosts: localhost
   gather_facts: false
   tasks:
-    # ADDED THIS: Installs the required library into the AWX runner pod
     - name: Ensure proxmoxer is installed
       ansible.builtin.pip:
         name: proxmoxer
@@ -31,7 +29,7 @@
         node: rent
         vmid: "{{ user_vm_id }}"
         update: yes
-        ciuser: "awx"  # Matches your key's intended user
+        ciuser: "awx"
         sshkeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID7mSEzQ3wuj8ktsUQuqVpchDvou5TFxqOAVfstHY9n0 awx@k3s"
         ipconfig:
           ipconfig0: "ip=dhcp"
@@ -43,6 +41,7 @@
         api_host: "192.168.42.141"
         vmid: "{{ user_vm_id }}"
         state: started
+
     - name: Wait for Guest Agent to report IPv4
       ansible.builtin.shell: |
         qm guest cmd {{ user_vm_id }} network-get-interfaces | grep -oE '192\.168\.[0-9]+\.[0-9]+' | head -n 1
@@ -60,36 +59,44 @@
         ansible_user: "awx"
         ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
 
-    - name: Wait for SSH to be ready
-      ansible.builtin.wait_for:
-        host: "{{ vm_ipv4.stdout }}"
-        port: 22
-        state: started
-        timeout: 120
-
-    - name: Wait for any background apt processes to finish
-      ansible.builtin.shell: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done;
-      timeout: 300
-
-# PLAY 2: Software Provisioning
+# PLAY 2: Software Provisioning (THIS STARTS THE NEW PLAY ON THE VM)
 - name: Stage 2 - Install Docker
   hosts: provisioned_nodes
   become: true
-  gather_facts: false # Important: don't gather facts until we're sure the user exists
+  gather_facts: true  # Now we can gather facts since the user exists
   tasks:
-    - name: Wait for SSH to be fully responsive for the new user
-      ansible.builtin.wait_for_connection:
-        delay: 5
-        timeout: 120
     - name: Wait for any background apt processes to finish
-      ansible.builtin.shell: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done;
+      ansible.builtin.shell: |
+        while fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock /var/lib/dpkg/lock >/dev/null 2>&1; do 
+          sleep 5
+        done
       timeout: 300
-    - name: Gather facts now that awx user is ready
-      ansible.builtin.setup:
-    - name: Run Docker Installation Script
-      ansible.builtin.shell: curl -sSL https://get.docker.com | sh
-      args:
-        creates: /usr/bin/docker
+
+    - name: Install Docker Dependencies
+      ansible.builtin.apt:
+        name: [ca-certificates, curl, gnupg]
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker Engine
+      ansible.builtin.apt:
+        name: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin]
+        state: present
+        update_cache: yes
+      register: docker_install
+      until: docker_install is success
+      retries: 5
+      delay: 10
 
     - name: Ensure Docker service is enabled
       ansible.builtin.systemd:
