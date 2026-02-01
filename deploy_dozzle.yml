@@ -1,0 +1,25 @@
+---
+- name: Deploy Dozzle Agent to Docker Hosts
+  hosts: all
+  become: true
+  tasks:
+    - name: Wait for any background apt processes to finish
+      ansible.builtin.shell: |
+        while fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock /var/lib/dpkg/lock >/dev/null 2>&1; do 
+          sleep 5
+        done
+      timeout: 300
+
+    - name: Pull the latest Dozzle image
+      ansible.builtin.shell: docker pull amir20/dozzle:latest
+
+    - name: Remove existing Dozzle agent (if any)
+      ansible.builtin.shell: docker rm -f dozzle_agent
+      ignore_errors: true
+
+    - name: Deploy Dozzle Agent
+      ansible.builtin.shell: |
+        docker run -d --name dozzle_agent --restart=unless-stopped \
+          -v /var/run/docker.sock:/var/run/docker.sock:ro \
+          -p 7007:7007 \
+          amir20/dozzle:latest agent
