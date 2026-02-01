@@ -3,16 +3,23 @@
   hosts: localhost
   gather_facts: false
   tasks:
+    - name: Ensure proxmoxer is installed
+      ansible.builtin.pip:
+        name: ["proxmoxer", "requests"]
+        state: present
+
     - name: Clone Template to New VM
       community.proxmox.proxmox_kvm:
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
         node: "rent"
-        clone: "noble-cloud-template"
+        clone: "noble-cloud-template" # Ensure this is now 20GB!
         newid: "{{ user_vm_id }}"
         name: "{{ user_vm_name }}"
-        full: yes   # Linked clones are now safe because the base is 20GB
+        full: yes                    # Full independence
+        storage: "roger"
+        timeout: 1200
         state: present
 
     - name: Configure Cloud-Init for AWX user
@@ -20,7 +27,7 @@
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
-        node: rent
+        node: "rent"
         vmid: "{{ user_vm_id }}"
         update: yes
         ciuser: "awx"
@@ -67,6 +74,6 @@
 
     - name: Install Docker
       ansible.builtin.apt:
-        name: [docker.io, docker-compose] # Simplified for standard Ubuntu repos
+        name: [docker.io, docker-compose]
         state: present
         update_cache: yes
