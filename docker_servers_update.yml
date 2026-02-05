@@ -1,15 +1,36 @@
+---
 - name: Update and upgrade Docker Servers
   hosts: all
-  become: true
   remote_user: awx
   serial: 1
+  become: true
   tasks:
-    - name: Update package list
-      become: yes
-      apt:
+    - name: Update apt cache and upgrade packages
+      ansible.builtin.apt:
         update_cache: yes
-
-    - name: Upgrade all packages
-      become: yes
-      apt:
         upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Check if a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Reboot the server if required
+      ansible.builtin.reboot:
+        msg: "Rebooting to apply kernel updates via Ansible"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists
+
+    - name: Verify system uptime
+      ansible.builtin.command: uptime
+      register: system_uptime
+      changed_when: false
+
+    - name: Show Uptime
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} uptime is {{ system_uptime.stdout }}"
