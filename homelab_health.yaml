@@ -1,0 +1,20 @@
+---
+- name: Verify Factory Node Health
+  hosts: all
+  become: true
+  tasks:
+    - name: Check Container Status
+      ansible.builtin.shell: docker ps --format "{% raw %}{{.Names}}: {{.Status}}{% endraw %}"
+      register: docker_verify
+      changed_when: false
+
+    - name: Report Agent Health
+      ansible.builtin.debug:
+        msg: 
+          - "Host: {{ inventory_hostname }}"
+          - "Active Agents: {{ docker_verify.stdout_lines }}"
+
+    - name: Ensure Port 7007 (Dozzle) is listening
+      ansible.builtin.wait_for:
+        port: 7007
+        timeout: 5
