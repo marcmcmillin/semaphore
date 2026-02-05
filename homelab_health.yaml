@@ -2,10 +2,13 @@
 - name: Verify Factory Node Health
   hosts: all
   become: true
+  vars:
+    # We define the format string here so Ansible doesn't try to parse it as a command
+    docker_format: "{{ '{' }}{{ '{' }}.Names{{ '}' }}{{ '}' }}: {{ '{' }}{{ '{' }}.Status{{ '}' }}{{ '}' }}"
+
   tasks:
     - name: Check Container Status
-      # Using double quotes for the shell and single quotes for the docker format
-      ansible.builtin.shell: "docker ps --format '{{.Names}}: {{.Status}}'"
+      ansible.builtin.shell: "docker ps --format '{{ docker_format }}'"
       register: docker_verify
       changed_when: false
 
