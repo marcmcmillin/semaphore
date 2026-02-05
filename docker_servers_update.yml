@@ -1,5 +1,6 @@
 - name: Update and upgrade Docker Servers
   hosts: all
+  remote_user: awx
   become: true
   serial: 1
   tasks:
