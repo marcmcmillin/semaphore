@@ -14,6 +14,7 @@
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
+        validate_certs: false
         node: "rent"
         clone: "noble-cloud-template"
         newid: "{{ user_vm_id }}"
@@ -28,6 +29,7 @@
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
+        validate_certs: false
         node: "rent"
         vmid: "{{ user_vm_id }}"
         update: yes
@@ -41,6 +43,7 @@
         api_user: "root@pam"
         api_password: "{{ proxmox_password }}"
         api_host: "192.168.42.141"
+        validate_certs: false
         vmid: "{{ user_vm_id }}"
         state: started
 
