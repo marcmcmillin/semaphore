@@ -11,7 +11,17 @@
     - name: Upgrade all packages
       apt:
         upgrade: dist
-        
+
+    # Old kernels pile up (~1.5G per update) and fill the 34G root disks
+    - name: Remove old kernels and unused packages
+      apt:
+        autoremove: yes
+        purge: yes
+
+    - name: Clean apt package cache
+      apt:
+        clean: yes
+
     - name: Check if a reboot is required
       ansible.builtin.stat:
         path: /var/run/reboot-required
